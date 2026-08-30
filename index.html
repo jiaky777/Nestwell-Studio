@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Curtain Measurement Tool</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Curtain Measurement Tool</div>
+    <div class="unit-toggle">
+      <label><input type="radio" name="unit" value="in" checked /> inches</label>
+      <label><input type="radio" name="unit" value="cm" /> cm</label>
+    </div>
+  </header>
+
+  <nav class="stepper" id="stepper">
+    <button class="step active" data-step="1"><span>1</span>Header Style</button>
+    <button class="step" data-step="2"><span>2</span>Rod</button>
+    <button class="step" data-step="3"><span>3</span>Coverage Width</button>
+    <button class="step" data-step="4"><span>4</span>Coverage Height</button>
+    <button class="step" data-step="5"><span>5</span>Panel</button>
+    <button class="step" data-step="6"><span>6</span>Fullness</button>
+    <button class="step" data-step="7"><span>7</span>Finished Length</button>
+  </nav>
+
+  <main class="layout">
+    <section class="content">
+      <!-- STEP 1 -->
+      <div class="panel active" data-panel="1">
+        <h2>Step 1 — Select the Header Style</h2>
+        <p class="muted">The header style affects the look, fullness ratio and the rod hardware you need.</p>
+        <div class="grid headers" id="headerGrid"></div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="panel" data-panel="2">
+        <h2>Step 2 — Choose the Rod / Hardware</h2>
+        <p class="muted">Position your hardware <strong>high</strong> (near the ceiling) and <strong>wide</strong> (extend past the window for stack-back).</p>
+        <div class="grid rods" id="rodGrid"></div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="panel" data-panel="3">
+        <h2>Step 3 — Coverage Width</h2>
+        <p class="muted">Measure the full width you want the curtains to cover when closed (rod length minus the finials, or the full track length).</p>
+        <div class="form-row">
+          <label>Window width <span class="hint">(measured edge-to-edge)</span></label>
+          <input type="number" id="windowWidth" min="0" step="0.1" value="60" placeholder="e.g. 60" />
+        </div>
+        <div class="form-row">
+          <label>Extension per side <span class="hint">(stack-back, recommended 6–12")</span></label>
+          <input type="number" id="extension" min="0" step="0.1" value="8" />
+        </div>
+        <div class="callout">
+          <div>Coverage width: <strong id="coverageWidthOut">—</strong></div>
+        </div>
+      </div>
+
+      <!-- STEP 4 -->
+      <div class="panel" data-panel="4">
+        <h2>Step 4 — Coverage Height</h2>
+        <p class="muted">Measure from the top of the rod (or hook position) down to where you want the curtain to end.</p>
+        <div class="form-row">
+          <label>Top of rod / hardware to floor</label>
+          <input type="number" id="rodToFloor" min="0" step="0.1" value="96" placeholder="e.g. 96" />
+        </div>
+        <div class="form-row">
+          <label>Bottom style</label>
+          <select id="bottomStyle">
+            <option value="0.5">Floating (1/2" above floor)</option>
+            <option value="0">Touching the floor</option>
+            <option value="-2">Break (2" puddle)</option>
+            <option value="-6">Puddle (6" puddle)</option>
+            <option value="sill">Sill / Apron — custom length</option>
+          </select>
+        </div>
+        <div class="form-row" id="customLengthRow" style="display:none">
+          <label>Custom finished length (sill / apron)</label>
+          <input type="number" id="customLength" min="0" step="0.1" placeholder="e.g. 36" />
+        </div>
+        <div class="callout">
+          <div>Finished length (height): <strong id="coverageHeightOut">—</strong></div>
+        </div>
+      </div>
+
+      <!-- STEP 5 -->
+      <div class="panel" data-panel="5">
+        <h2>Step 5 — Panel Quantity</h2>
+        <p class="muted">A pair (2 panels) is the most common choice. Use 1 panel for a single-side draw.</p>
+        <div class="grid small">
+          <label class="card-pick">
+            <input type="radio" name="panels" value="1" />
+            <div class="card-pick-body"><strong>1 Panel</strong><span>Single side draw</span></div>
+          </label>
+          <label class="card-pick">
+            <input type="radio" name="panels" value="2" checked />
+            <div class="card-pick-body"><strong>2 Panels (pair)</strong><span>Most common</span></div>
+          </label>
+        </div>
+      </div>
+
+      <!-- STEP 6 -->
+      <div class="panel" data-panel="6">
+        <h2>Step 6 — Fullness</h2>
+        <p class="muted">Choose 2× for rich drape folds, 2.5–3× for sheers and a luxurious look.</p>
+        <div class="grid small">
+          <label class="card-pick">
+            <input type="radio" name="fullness" value="1.5" />
+            <div class="card-pick-body"><strong>1.5×</strong><span>Light gather</span></div>
+          </label>
+          <label class="card-pick">
+            <input type="radio" name="fullness" value="2" checked />
+            <div class="card-pick-body"><strong>2×</strong><span>Recommended for drapes</span></div>
+          </label>
+          <label class="card-pick">
+            <input type="radio" name="fullness" value="2.5" />
+            <div class="card-pick-body"><strong>2.5×</strong><span>Rich drape</span></div>
+          </label>
+          <label class="card-pick">
+            <input type="radio" name="fullness" value="3" />
+            <div class="card-pick-body"><strong>3×</strong><span>Sheers / luxury</span></div>
+          </label>
+        </div>
+      </div>
+
+      <!-- STEP 7 -->
+      <div class="panel" data-panel="7">
+        <h2>Step 7 — Review &amp; Finished Length</h2>
+        <p class="muted">Here's your full order spec. Click <strong>Done</strong> to see a preview of how your curtain will look.</p>
+        <div class="summary" id="summary"></div>
+        <div class="preview-wrap" id="previewWrap" hidden>
+          <h3>Preview</h3>
+          <div class="preview" id="preview"></div>
+          <p class="muted preview-caption" id="previewCaption"></p>
+        </div>
+        <div class="actions-row">
+          <button class="btn ghost" id="printBtn">Print</button>
+          <button class="btn ghost" id="copyBtn">Copy spec</button>
+          <button class="btn ghost" id="resetBtn">Start over</button>
+        </div>
+      </div>
+
+      <div class="nav">
+        <button class="btn" id="prevBtn" disabled>← Back</button>
+        <button class="btn primary" id="nextBtn">Next →</button>
+      </div>
+    </section>
+
+    <aside class="sidebar">
+      <h3>Live Summary</h3>
+      <ul class="live" id="live"></ul>
+      <div class="tips">
+        <h4>Before you measure</h4>
+        <ol>
+          <li>Know your header style.</li>
+          <li>Hang hardware <em>high</em> and <em>wide</em>.</li>
+          <li>Decide panel quantity.</li>
+          <li>Choose 2× fullness (drapes) or 2.5–3× (sheers).</li>
+          <li>Floating look: 1/2" above the floor.</li>
+        </ol>
+        <p class="disclaimer">All curtains are handmade — a dimensional tolerance of ±1" is expected.</p>
+      </div>
+    </aside>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
