@@ -956,13 +956,14 @@ fieldset {
 
   .summary-trigger {
     position: fixed;
-    right: 16px;
-    bottom: 16px;
+    top: calc(env(safe-area-inset-top, 0px) + 16px);
+    right: 0;
+    bottom: auto;
     z-index: 40;
     min-height: 52px;
     padding: 9px 16px;
     border: 1px solid var(--terracotta);
-    border-radius: 5px;
+    border-radius: 5px 0 0 5px;
     color: var(--paper);
     background: var(--terracotta-dark);
     box-shadow: 0 8px 24px rgba(61, 46, 31, 0.2);
