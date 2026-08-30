@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="NestWell Studio curtain width and length measuring tool.">
+  <title>Curtain Measuring Tool | NestWell Studio</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="page-shell">
+    <section class="intro" aria-labelledby="page-title">
+      <p class="eyebrow">Made-to-measure curtains</p>
+      <h1 id="page-title">Find your curtain dimensions</h1>
+      <p>Five considered steps for a confident, workshop-ready measurement.</p>
+    </section>
+
+    <nav class="progress" aria-label="Measurement progress">
+      <ol>
+        <li><button type="button" class="progress-step is-active" data-go-step="1" aria-current="step"><span>01</span>Rod width</button></li>
+        <li><button type="button" class="progress-step" data-go-step="2"><span>02</span>Heading</button></li>
+        <li><button type="button" class="progress-step" data-go-step="3"><span>03</span>Fullness</button></li>
+        <li><button type="button" class="progress-step" data-go-step="4"><span>04</span>Panels</button></li>
+        <li><button type="button" class="progress-step" data-go-step="5"><span>05</span>Length</button></li>
+      </ol>
+    </nav>
+
+    <div class="unit-toolbar">
+      <fieldset class="unit-switch" aria-label="Measurement unit">
+        <legend>Measurement unit</legend>
+        <label><input type="radio" name="unit" value="in" checked><span>Inches</span></label>
+        <label><input type="radio" name="unit" value="cm"><span>Centimeters</span></label>
+      </fieldset>
+    </div>
+
+    <div class="workspace">
+      <section class="tool" aria-live="polite">
+        <form id="measurementForm" novalidate>
+          <section class="step-panel is-active" data-step="1" aria-labelledby="step-1-title">
+            <header class="step-heading">
+              <p class="step-kicker">Step 1 of 5</p>
+              <h2 id="step-1-title">Measure the rod or track</h2>
+              <p>Measure the usable width, excluding decorative finials. If your hardware is not installed, estimate it from the window width.</p>
+            </header>
+
+            <fieldset class="choice-group">
+              <legend>Is the rod or track already installed?</legend>
+              <div class="choice-grid two-column">
+                <label class="choice-card">
+                  <input type="radio" name="widthMethod" value="direct" checked>
+                  <span class="choice-copy"><strong>Yes, measure it</strong><small>Enter the usable rod or track length.</small></span>
+                </label>
+                <label class="choice-card">
+                  <input type="radio" name="widthMethod" value="window">
+                  <span class="choice-copy"><strong>Not yet</strong><small>Estimate from the window width.</small></span>
+                </label>
+              </div>
+            </fieldset>
+
+            <div id="directWidthFields">
+              <label class="field" for="rodWidth">
+                <span>Rod or track length</span>
+                <span class="measurement-input"><input id="rodWidth" type="number" min="0" step="0.1" inputmode="decimal" placeholder="Enter length"><small data-unit-label>in</small></span>
+              </label>
+            </div>
+
+            <div id="windowWidthFields" hidden>
+              <label class="field" for="windowWidth">
+                <span>Window width</span>
+                <span class="measurement-input"><input id="windowWidth" type="number" min="0" step="0.1" inputmode="decimal" placeholder="Enter width"><small data-unit-label>in</small></span>
+              </label>
+              <fieldset class="choice-group compact">
+                <legend>Add room for stacking curtains</legend>
+                <div class="choice-grid two-column">
+                  <label class="choice-card">
+                    <input type="radio" name="extension" value="12" checked>
+                    <span class="choice-copy"><strong data-extension="12">+12 in</strong><small>Recommended for small windows</small></span>
+                  </label>
+                  <label class="choice-card">
+                    <input type="radio" name="extension" value="16">
+                    <span class="choice-copy"><strong data-extension="16">+16 in</strong><small>Recommended for large windows</small></span>
+                  </label>
+                </div>
+              </fieldset>
+            </div>
+
+            <div class="result-strip"><span>Rod or track width</span><strong id="curtainWidthResult">Not measured</strong></div>
+            <p class="field-error" id="step1Error" role="alert"></p>
+          </section>
+
+          <section class="step-panel" data-step="2" aria-labelledby="step-2-title" hidden>
+            <header class="step-heading">
+              <p class="step-kicker">Step 2 of 5</p>
+              <h2 id="step-2-title">Choose your heading style</h2>
+              <p>The heading determines how the curtain hangs and which fullness choices are suitable.</p>
+            </header>
+            <fieldset class="choice-group">
+              <legend class="sr-only">Heading style</legend>
+              <div class="heading-grid" id="headingOptions"></div>
+            </fieldset>
+            <p class="field-error" id="step2Error" role="alert"></p>
+          </section>
+
+          <section class="step-panel" data-step="3" aria-labelledby="step-3-title" hidden>
+            <header class="step-heading">
+              <p class="step-kicker">Step 3 of 5</p>
+              <h2 id="step-3-title">Choose the fullness</h2>
+              <p>Fullness is the ratio of fabric width to rod width. More fullness creates deeper, richer folds.</p>
+            </header>
+            <div class="context-note" id="fullnessGuidance"></div>
+            <fieldset class="choice-group">
+              <legend>Fullness ratio</legend>
+              <div class="choice-grid three-column" id="fullnessOptions"></div>
+            </fieldset>
+            <div class="formula" aria-label="Fabric width formula">
+              <span id="formulaRodWidth">—</span><i aria-hidden="true">×</i><span id="formulaFullness">—</span><i aria-hidden="true">=</i><strong id="fabricWidthResult">—</strong>
+            </div>
+            <p class="field-error" id="step3Error" role="alert"></p>
+          </section>
+
+          <section class="step-panel" data-step="4" aria-labelledby="step-4-title" hidden>
+            <header class="step-heading">
+              <p class="step-kicker">Step 4 of 5</p>
+              <h2 id="step-4-title">Choose the number of panels</h2>
+              <p>A pair opens from the center; one panel is suited to a single-side draw.</p>
+            </header>
+            <fieldset class="choice-group">
+              <legend>Panel quantity</legend>
+              <div class="choice-grid two-column">
+                <label class="choice-card panel-choice">
+                  <input type="radio" name="panels" value="1">
+                  <span class="panel-icon one" aria-hidden="true"><i></i></span>
+                  <span class="choice-copy"><strong>1 Panel</strong><small>Single-side opening</small></span>
+                </label>
+                <label class="choice-card panel-choice">
+                  <input type="radio" name="panels" value="2" checked>
+                  <span class="panel-icon two" aria-hidden="true"><i></i><i></i></span>
+                  <span class="choice-copy"><strong>2 Panels</strong><small>Center opening</small></span>
+                </label>
+              </div>
+            </fieldset>
+            <div class="dimension-pair">
+              <div><span>Total fabric width</span><strong id="panelTotalResult">—</strong></div>
+              <div><span>Width per panel</span><strong id="panelWidthResult">—</strong></div>
+            </div>
+          </section>
+
+          <section class="step-panel" data-step="5" aria-labelledby="step-5-title" hidden>
+            <header class="step-heading">
+              <p class="step-kicker">Step 5 of 5</p>
+              <h2 id="step-5-title">Measure the finished length</h2>
+              <p>Your starting point depends on the selected heading style. Keep the tape straight and measure to your desired hem.</p>
+            </header>
+            <div class="length-guide">
+              <div class="length-illustration" id="lengthIllustration"></div>
+              <div>
+                <p class="eyebrow" id="lengthHeadingName"></p>
+                <h3 id="lengthGuideTitle"></h3>
+                <p id="lengthGuideCopy"></p>
+                <ul>
+                  <li>Measure at two or three points to check for an uneven floor.</li>
+                  <li>Use the shortest measurement for a clean, floor-skimming finish.</li>
+                </ul>
+              </div>
+            </div>
+            <label class="field" for="curtainLength">
+              <span>Finished curtain length</span>
+              <span class="measurement-input"><input id="curtainLength" type="number" min="0" step="0.1" inputmode="decimal" placeholder="Enter length"><small data-unit-label>in</small></span>
+            </label>
+            <p class="field-error" id="step5Error" role="alert"></p>
+          </section>
+
+          <section class="step-panel review-panel" data-step="6" aria-labelledby="review-title" hidden>
+            <header class="step-heading">
+              <p class="step-kicker">Your measurements</p>
+              <h2 id="review-title">Ready for the workroom</h2>
+              <p>Review these dimensions before ordering. Curtain width shown is the flat fabric width before sewing allowances.</p>
+            </header>
+            <dl class="review-list" id="reviewList"></dl>
+            <p class="copy-status" id="copyStatus" role="status"></p>
+            <div class="review-actions">
+              <button type="button" class="button secondary" id="editButton">Edit measurements</button>
+              <button type="button" class="button secondary" id="copyButton">Copy specification</button>
+              <button type="button" class="button secondary" id="printButton">Print</button>
+              <button type="button" class="text-button" id="resetButton">Start over</button>
+            </div>
+          </section>
+
+          <footer class="form-navigation" id="formNavigation">
+            <button type="button" class="button secondary" id="backButton" disabled>Back</button>
+            <button type="button" class="button primary" id="nextButton">Continue</button>
+          </footer>
+        </form>
+      </section>
+
+      <aside class="summary-rail" aria-labelledby="summary-title">
+        <p class="eyebrow">Live estimate</p>
+        <h2 id="summary-title">Your curtain</h2>
+        <dl id="liveSummary"></dl>
+        <div class="summary-note">
+          <span aria-hidden="true">±</span>
+          <p><strong>Measure twice</strong>Handmade curtains may have a finished tolerance of up to 1 inch.</p>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
