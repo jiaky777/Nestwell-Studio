@@ -343,8 +343,8 @@ function specificationText() {
   return [
     'NESTWELL STUDIO CURTAIN SPECIFICATION',
     `Rod or track width: ${formatDimension(curtainWidth())}`,
-    `Heading style: ${heading.name}`,
-    `Fullness: ${state.fullness.toFixed(1)}x`,
+    `Heading style: ${heading?.name ?? '-'}`,
+    `Fullness: ${state.fullness == null ? '-' : `${state.fullness.toFixed(1)}x`}`,
     `Total fabric width: ${formatDimension(fabricWidth())}`,
     `Panels: ${state.panels}`,
     `Width per panel: ${formatDimension(panelWidth())}`,
@@ -364,7 +364,7 @@ function appendXmlElement(documentNode, parent, name, value) {
 
 function appendXmlDimension(documentNode, parent, name, inches) {
   const value = displayValue(inches);
-  const element = appendXmlElement(documentNode, parent, name, Number(value.toFixed(2)));
+  const element = appendXmlElement(documentNode, parent, name, value == null ? '' : Number(value.toFixed(2)));
   element.setAttribute('unit', state.unit);
   return element;
 }
@@ -389,9 +389,9 @@ function specificationXml() {
 
   const style = xmlDocument.createElement('style');
   root.append(style);
-  const headingElement = appendXmlElement(xmlDocument, style, 'headingStyle', heading.name);
-  headingElement.setAttribute('id', heading.id);
-  appendXmlElement(xmlDocument, style, 'fullnessRatio', state.fullness);
+  const headingElement = appendXmlElement(xmlDocument, style, 'headingStyle', heading?.name ?? '');
+  if (heading) headingElement.setAttribute('id', heading.id);
+  appendXmlElement(xmlDocument, style, 'fullnessRatio', state.fullness ?? '');
 
   const fabric = xmlDocument.createElement('fabric');
   root.append(fabric);
