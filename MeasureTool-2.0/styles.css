@@ -225,7 +225,7 @@ input:focus-visible {
   border-bottom: 1px solid var(--line);
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: flex-start;
 }
 
 .workspace {
@@ -629,18 +629,47 @@ fieldset {
   padding-bottom: 28px;
   border-bottom: 1px solid var(--line);
   display: grid;
-  grid-template-columns: 210px minmax(0, 1fr);
-  gap: 30px;
-  align-items: center;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 28px;
 }
 
 .length-illustration {
   position: relative;
-  height: 250px;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  overflow: hidden;
   border: 1px solid var(--line);
   background: rgba(216, 199, 161, 0.15);
   display: grid;
   place-items: center;
+}
+
+.length-copy {
+  position: relative;
+  z-index: 1;
+  padding: 22px 24px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+}
+
+.length-adjustment {
+  width: min(100%, 560px);
+  margin: 18px 0;
+  padding: 16px 18px;
+  border-left: 3px solid var(--terracotta);
+  background: rgba(216, 199, 161, 0.22);
+}
+
+.length-adjustment strong {
+  font-family: var(--serif);
+  font-weight: 400;
+}
+
+.length-adjustment p {
+  margin: 4px 0 0;
+  color: var(--taupe);
+  font-size: 13px;
 }
 
 .measure-line {
@@ -747,6 +776,19 @@ fieldset {
   border-top: 3px solid var(--terracotta);
   border-bottom: 1px solid var(--line);
   background: rgba(238, 231, 216, 0.58);
+}
+
+.summary-popup-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.summary-close,
+.summary-trigger,
+.summary-backdrop {
+  display: none;
 }
 
 .summary-rail h2 {
@@ -877,19 +919,95 @@ fieldset {
   }
 
   .summary-rail {
-    position: static;
-    grid-row: 1;
-    padding: 18px 20px;
+    position: fixed;
+    right: 12px;
+    bottom: 12px;
+    z-index: 50;
+    width: min(420px, calc(100% - 24px));
+    max-height: calc(100dvh - 24px);
+    padding: 24px;
+    overflow-y: auto;
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--terracotta);
+    background: var(--paper);
+    box-shadow: 0 18px 50px rgba(61, 46, 31, 0.2);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+    transition: opacity 180ms ease, transform 180ms ease, visibility 180ms;
   }
 
-  .summary-rail dl {
+  .summary-close {
+    width: 36px;
+    height: 36px;
+    flex: 0 0 auto;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    color: var(--coffee);
+    background: transparent;
+    cursor: pointer;
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: 24px;
+    place-items: center;
+    font-family: var(--serif);
+    font-size: 25px;
+    line-height: 1;
   }
 
-  .summary-note {
-    display: none;
+  .summary-trigger {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 40;
+    min-height: 52px;
+    padding: 9px 16px;
+    border: 1px solid var(--terracotta);
+    border-radius: 5px;
+    color: var(--paper);
+    background: var(--terracotta-dark);
+    box-shadow: 0 8px 24px rgba(61, 46, 31, 0.2);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    line-height: 1.15;
+  }
+
+  .summary-trigger span {
+    font-size: 12px;
+  }
+
+  .summary-trigger strong {
+    margin-top: 3px;
+    font-family: var(--serif);
+    font-size: 14px;
+    font-weight: 400;
+  }
+
+  .summary-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 45;
+    background: rgba(61, 46, 31, 0.38);
+  }
+
+  .summary-is-open {
+    overflow: hidden;
+  }
+
+  .summary-is-open .summary-rail {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .summary-is-open .summary-backdrop {
+    display: block;
+  }
+
+  .summary-is-open .summary-trigger {
+    visibility: hidden;
   }
 }
 
@@ -929,10 +1047,6 @@ fieldset {
     font-size: 11px;
   }
 
-  .summary-rail dl {
-    grid-template-columns: 1fr;
-  }
-
   .tool,
   #measurementForm {
     min-height: 0;
@@ -966,12 +1080,8 @@ fieldset {
     border-left: 0;
   }
 
-  .length-guide {
-    grid-template-columns: 1fr;
-  }
-
-  .length-illustration {
-    height: 190px;
+  .length-copy {
+    padding: 18px;
   }
 
   .form-navigation {
@@ -1035,6 +1145,8 @@ fieldset {
   .progress,
   .unit-toolbar,
   .summary-rail,
+  .summary-trigger,
+  .summary-backdrop,
   .form-navigation,
   .review-actions,
   .copy-status {

@@ -124,6 +124,14 @@ function panelWidth() {
   return total == null ? null : total / state.panels;
 }
 
+function lengthAllowance() {
+  return state.headingId === 'grommet' ? 2 : 0;
+}
+
+function finishedCurtainLength() {
+  return state.curtainLengthIn == null ? null : state.curtainLengthIn + lengthAllowance();
+}
+
 function renderHeadingOptions() {
   $('#headingOptions').innerHTML = HEADINGS.map((heading) => `
     <label class="heading-card">
@@ -198,6 +206,18 @@ function renderCalculations() {
   $('#fabricWidthResult').textContent = formatDimension(fabricWidth());
   $('#panelTotalResult').textContent = formatDimension(fabricWidth());
   $('#panelWidthResult').textContent = formatDimension(panelWidth());
+  renderLengthCalculation();
+}
+
+function renderLengthCalculation() {
+  const allowance = lengthAllowance();
+  const adjustment = $('#grommetLengthAdjustment');
+  adjustment.hidden = allowance === 0;
+  if (allowance > 0) {
+    const allowanceLabel = state.unit === 'cm' ? '5.08 cm' : '2 in';
+    $('#grommetLengthCopy').textContent = `For Grommet Top curtains, ${allowanceLabel} is automatically added to your measured length.`;
+  }
+  $('#finishedLengthResult').textContent = formatDimension(finishedCurtainLength());
 }
 
 function renderLiveSummary() {
@@ -209,11 +229,28 @@ function renderLiveSummary() {
     ['Total fabric width', formatDimension(fabricWidth())],
     ['Panels', String(state.panels)],
     ['Width per panel', formatDimension(panelWidth())],
-    ['Finished length', formatDimension(state.curtainLengthIn)],
+    ['Final length', formatDimension(finishedCurtainLength())],
   ];
   $('#liveSummary').innerHTML = items.map(([label, value]) => `
     <div><dt>${label}</dt><dd class="${value === '—' ? 'is-empty' : ''}">${value}</dd></div>
   `).join('');
+  $('#summaryTriggerValue').textContent = formatDimension(panelWidth());
+}
+
+const mobileSummaryQuery = window.matchMedia('(max-width: 900px)');
+
+function setSummaryOpen(open) {
+  const isMobile = mobileSummaryQuery.matches;
+  const shouldOpen = isMobile && open;
+  document.body.classList.toggle('summary-is-open', shouldOpen);
+  $('#summaryTrigger').setAttribute('aria-expanded', String(shouldOpen));
+  $('#summaryPopup').setAttribute('aria-hidden', String(isMobile && !shouldOpen));
+  if (shouldOpen) $('#summaryClose').focus();
+}
+
+function syncSummaryMode() {
+  setSummaryOpen(false);
+  if (!mobileSummaryQuery.matches) $('#summaryPopup').removeAttribute('aria-hidden');
 }
 
 function renderReview() {
@@ -229,7 +266,9 @@ function renderReview() {
     ['Total fabric width', formatDimension(fabricWidth())],
     ['Number of panels', `${state.panels} panel${state.panels === 1 ? '' : 's'}`],
     ['Width per panel', formatDimension(panelWidth())],
-    ['Finished curtain length', formatDimension(state.curtainLengthIn)],
+    ['Measured curtain length', formatDimension(state.curtainLengthIn)],
+    ...(lengthAllowance() > 0 ? [['Grommet adjustment', `+${formatDimension(lengthAllowance())}`]] : []),
+    ['Final curtain length', formatDimension(finishedCurtainLength())],
   ];
   $('#reviewList').innerHTML = items.map(([label, value]) => `<div><dt>${label}</dt><dd>${value}</dd></div>`).join('');
 }
@@ -286,7 +325,7 @@ function validateStep() {
     return false;
   }
   if (state.step === 5 && state.curtainLengthIn == null) {
-    $('#step5Error').textContent = 'Enter the finished curtain length.';
+    $('#step5Error').textContent = 'Enter the measured curtain length.';
     return false;
   }
   return true;
@@ -309,9 +348,79 @@ function specificationText() {
     `Total fabric width: ${formatDimension(fabricWidth())}`,
     `Panels: ${state.panels}`,
     `Width per panel: ${formatDimension(panelWidth())}`,
-    `Finished curtain length: ${formatDimension(state.curtainLengthIn)}`,
+    `Measured curtain length: ${formatDimension(state.curtainLengthIn)}`,
+    ...(lengthAllowance() > 0 ? [`Grommet adjustment: +${formatDimension(lengthAllowance())}`] : []),
+    `Final curtain length: ${formatDimension(finishedCurtainLength())}`,
     'Note: Confirm all measurements before ordering.',
   ].join('\n');
+}
+
+function appendXmlElement(documentNode, parent, name, value) {
+  const element = documentNode.createElement(name);
+  element.textContent = String(value);
+  parent.append(element);
+  return element;
+}
+
+function appendXmlDimension(documentNode, parent, name, inches) {
+  const value = displayValue(inches);
+  const element = appendXmlElement(documentNode, parent, name, Number(value.toFixed(2)));
+  element.setAttribute('unit', state.unit);
+  return element;
+}
+
+function specificationXml() {
+  const heading = selectedHeading();
+  const xmlDocument = document.implementation.createDocument('', 'curtainSpecification');
+  const root = xmlDocument.documentElement;
+  root.setAttribute('version', '1.0');
+  root.setAttribute('generatedAt', new Date().toISOString());
+
+  appendXmlElement(xmlDocument, root, 'displayUnit', state.unit);
+
+  const width = xmlDocument.createElement('width');
+  root.append(width);
+  appendXmlElement(xmlDocument, width, 'measurementMethod', state.widthMethod === 'direct' ? 'measured-rod-or-track' : 'window-estimate');
+  if (state.widthMethod === 'window') {
+    appendXmlDimension(xmlDocument, width, 'windowWidth', state.windowWidthIn);
+    appendXmlDimension(xmlDocument, width, 'totalExtension', state.extensionIn);
+  }
+  appendXmlDimension(xmlDocument, width, 'rodOrTrackWidth', curtainWidth());
+
+  const style = xmlDocument.createElement('style');
+  root.append(style);
+  const headingElement = appendXmlElement(xmlDocument, style, 'headingStyle', heading.name);
+  headingElement.setAttribute('id', heading.id);
+  appendXmlElement(xmlDocument, style, 'fullnessRatio', state.fullness);
+
+  const fabric = xmlDocument.createElement('fabric');
+  root.append(fabric);
+  appendXmlDimension(xmlDocument, fabric, 'totalFabricWidth', fabricWidth());
+  appendXmlElement(xmlDocument, fabric, 'panelCount', state.panels);
+  appendXmlDimension(xmlDocument, fabric, 'widthPerPanel', panelWidth());
+
+  const length = xmlDocument.createElement('length');
+  root.append(length);
+  appendXmlDimension(xmlDocument, length, 'measuredCurtainLength', state.curtainLengthIn);
+  appendXmlDimension(xmlDocument, length, 'headingAdjustment', lengthAllowance());
+  appendXmlDimension(xmlDocument, length, 'finalCurtainLength', finishedCurtainLength());
+
+  appendXmlElement(xmlDocument, root, 'note', 'Confirm all measurements before ordering.');
+  return `<?xml version="1.0" encoding="UTF-8"?>\n${new XMLSerializer().serializeToString(xmlDocument)}`;
+}
+
+function downloadSpecificationXml() {
+  const blob = new Blob([specificationXml()], { type: 'application/xml;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  const date = new Date().toISOString().slice(0, 10);
+  link.href = url;
+  link.download = `nestwell-curtain-specification-${date}.xml`;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+  $('#copyStatus').textContent = 'XML specification downloaded.';
 }
 
 async function copySpecification() {
@@ -424,6 +533,7 @@ document.addEventListener('DOMContentLoaded', () => {
   $('#curtainLength').addEventListener('input', (event) => {
     state.curtainLengthIn = inputToInches(event.target.value);
     clearErrors();
+    renderLengthCalculation();
     renderLiveSummary();
   });
 
@@ -435,6 +545,21 @@ document.addEventListener('DOMContentLoaded', () => {
   $$('.progress-step').forEach((button) => button.addEventListener('click', () => goToStep(Number(button.dataset.goStep))));
   $('#editButton').addEventListener('click', () => goToStep(1));
   $('#copyButton').addEventListener('click', copySpecification);
+  $('#downloadXmlButton').addEventListener('click', downloadSpecificationXml);
   $('#printButton').addEventListener('click', () => window.print());
   $('#resetButton').addEventListener('click', resetTool);
+  $('#summaryTrigger').addEventListener('click', () => setSummaryOpen(true));
+  $('#summaryClose').addEventListener('click', () => {
+    setSummaryOpen(false);
+    $('#summaryTrigger').focus();
+  });
+  $('#summaryBackdrop').addEventListener('click', () => setSummaryOpen(false));
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && document.body.classList.contains('summary-is-open')) {
+      setSummaryOpen(false);
+      $('#summaryTrigger').focus();
+    }
+  });
+  mobileSummaryQuery.addEventListener('change', syncSummaryMode);
+  syncSummaryMode();
 });

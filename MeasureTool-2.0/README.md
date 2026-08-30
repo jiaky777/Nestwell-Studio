@@ -20,7 +20,7 @@ Then visit `http://localhost:8000/MeasureTool-2.0/`.
 4. Choose one or two panels.
 5. Follow the heading-specific guide and enter the finished curtain length.
 
-The review screen supports printing, copying the specification, editing, and starting over.
+The review screen supports printing, copying the specification, downloading all measurements as XML, editing, and starting over.
 
 ## Formulas
 
@@ -30,9 +30,10 @@ rod_width = window_width + selected_total_extension
 
 total_fabric_width = rod_width × fullness
 panel_width = total_fabric_width ÷ panel_count
+grommet_final_length = measured_length + 2 inches
 ```
 
-Dimensions are stored internally in inches. Changing the unit converts displayed and entered dimensions without changing the underlying physical measurements.
+Dimensions are stored internally in inches. Changing the unit converts displayed and entered dimensions without changing the underlying physical measurements. Grommet Top curtains automatically receive a 2-inch (5.08-centimeter) finished-length adjustment.
 
 ## Files
 

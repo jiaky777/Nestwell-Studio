@@ -153,7 +153,7 @@
             </header>
             <div class="length-guide">
               <div class="length-illustration" id="lengthIllustration"></div>
-              <div>
+              <div class="length-copy">
                 <p class="eyebrow" id="lengthHeadingName"></p>
                 <h3 id="lengthGuideTitle"></h3>
                 <p id="lengthGuideCopy"></p>
@@ -164,9 +164,17 @@
               </div>
             </div>
             <label class="field" for="curtainLength">
-              <span>Finished curtain length</span>
+              <span>Measured curtain length</span>
               <span class="measurement-input"><input id="curtainLength" type="number" min="0" step="0.1" inputmode="decimal" placeholder="Enter length"><small data-unit-label>in</small></span>
             </label>
+            <div class="length-adjustment" id="grommetLengthAdjustment" hidden>
+              <strong>Grommet Top adjustment</strong>
+              <p id="grommetLengthCopy"></p>
+            </div>
+            <div class="result-strip">
+              <span>Final curtain length</span>
+              <strong id="finishedLengthResult">—</strong>
+            </div>
             <p class="field-error" id="step5Error" role="alert"></p>
           </section>
 
@@ -181,6 +189,7 @@
             <div class="review-actions">
               <button type="button" class="button secondary" id="editButton">Edit measurements</button>
               <button type="button" class="button secondary" id="copyButton">Copy specification</button>
+              <button type="button" class="button secondary" id="downloadXmlButton">Download XML</button>
               <button type="button" class="button secondary" id="printButton">Print</button>
               <button type="button" class="text-button" id="resetButton">Start over</button>
             </div>
@@ -193,8 +202,11 @@
         </form>
       </section>
 
-      <aside class="summary-rail" aria-labelledby="summary-title">
-        <p class="eyebrow">Live estimate</p>
+      <aside class="summary-rail" id="summaryPopup" aria-labelledby="summary-title">
+        <div class="summary-popup-header">
+          <p class="eyebrow">Live estimate</p>
+          <button type="button" class="summary-close" id="summaryClose" aria-label="Close live estimate" title="Close">×</button>
+        </div>
         <h2 id="summary-title">Your curtain</h2>
         <dl id="liveSummary"></dl>
         <div class="summary-note">
@@ -203,6 +215,12 @@
         </div>
       </aside>
     </div>
+
+    <div class="summary-backdrop" id="summaryBackdrop" aria-hidden="true"></div>
+    <button type="button" class="summary-trigger" id="summaryTrigger" aria-controls="summaryPopup" aria-expanded="false">
+      <span>Live estimate</span>
+      <strong id="summaryTriggerValue">—</strong>
+    </button>
   </main>
 
   <script src="app.js"></script>
