@@ -913,6 +913,70 @@ fieldset {
   text-underline-offset: 3px;
 }
 
+.save-dialog {
+  width: min(440px, calc(100% - 32px));
+  padding: 0;
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--terracotta);
+  border-radius: 6px;
+  color: var(--coffee);
+  background: var(--paper);
+  box-shadow: 0 24px 60px rgba(61, 46, 31, 0.24);
+}
+
+.save-dialog[open] {
+  animation: dialog-in 200ms ease-out both;
+}
+
+@keyframes dialog-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.save-dialog::backdrop {
+  background: rgba(61, 46, 31, 0.42);
+}
+
+.save-dialog form {
+  padding: 28px;
+}
+
+.save-dialog h2 {
+  margin: 0 0 10px;
+  font-family: var(--serif);
+  font-size: 27px;
+  font-weight: 400;
+  line-height: 1.15;
+}
+
+.save-dialog-copy {
+  margin: 0;
+  color: var(--taupe);
+  font-size: 14px;
+}
+
+.save-dialog .field {
+  width: 100%;
+  margin: 20px 0 0;
+}
+
+.save-dialog .measurement-input input {
+  font-size: 16px;
+}
+
+.save-dialog .measurement-input small {
+  min-width: 56px;
+  color: var(--taupe);
+}
+
+.save-dialog-actions {
+  margin-top: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 9px;
+}
+
 @media (max-width: 900px) {
   .workspace {
     grid-template-columns: 1fr;

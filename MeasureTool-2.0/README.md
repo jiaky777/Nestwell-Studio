@@ -20,7 +20,7 @@ Then visit `http://localhost:8000/MeasureTool-2.0/`.
 4. Choose one or two panels.
 5. Follow the heading-specific guide and enter the finished curtain length.
 
-The review screen supports printing, copying the specification, downloading all measurements as XML, editing, and starting over.
+The review screen supports printing, copying the specification, naming and saving all measurements as an XML file, editing, and starting over.
 
 ## Formulas
 

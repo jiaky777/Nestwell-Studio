@@ -189,7 +189,7 @@
             <div class="review-actions">
               <button type="button" class="button secondary" id="editButton">Edit measurements</button>
               <button type="button" class="button secondary" id="copyButton">Copy specification</button>
-              <button type="button" class="button secondary" id="downloadXmlButton">Download XML</button>
+              <button type="button" class="button secondary" id="saveXmlButton">Name &amp; Save it</button>
               <button type="button" class="button secondary" id="printButton">Print</button>
               <button type="button" class="text-button" id="resetButton">Start over</button>
             </div>
@@ -221,6 +221,26 @@
       <span>Live estimate</span>
       <strong id="summaryTriggerValue">—</strong>
     </button>
+
+    <dialog class="save-dialog" id="saveDialog" aria-labelledby="save-dialog-title">
+      <form method="dialog" id="saveDialogForm">
+        <p class="eyebrow">Save your specification</p>
+        <h2 id="save-dialog-title">Name this curtain</h2>
+        <p class="save-dialog-copy">Give this measurement a name you will recognise later, such as the room or window it belongs to.</p>
+        <label class="field" for="saveFileName">
+          <span>File name</span>
+          <span class="measurement-input">
+            <input id="saveFileName" type="text" autocomplete="off" placeholder="Living room bay window" maxlength="80" required>
+            <small>.xml</small>
+          </span>
+        </label>
+        <p class="field-error" id="saveDialogError" role="alert"></p>
+        <div class="save-dialog-actions">
+          <button type="button" class="button secondary" id="saveDialogCancel">Cancel</button>
+          <button type="submit" class="button primary" id="saveDialogConfirm">Save file</button>
+        </div>
+      </form>
+    </dialog>
   </main>
 
   <script src="app.js"></script>

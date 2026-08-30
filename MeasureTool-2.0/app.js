@@ -409,18 +409,59 @@ function specificationXml() {
   return `<?xml version="1.0" encoding="UTF-8"?>\n${new XMLSerializer().serializeToString(xmlDocument)}`;
 }
 
-function downloadSpecificationXml() {
+function defaultFileName() {
+  return `nestwell-curtain-specification-${new Date().toISOString().slice(0, 10)}`;
+}
+
+// Strips characters that operating systems reject in file names.
+function sanitizeFileName(name) {
+  return name
+    .replace(/\.xml$/i, '')
+    .replace(/[\\/:*?"<>|\u0000-\u001f]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .replace(/^[\s.]+|[\s.]+$/g, '')
+    .slice(0, 80);
+}
+
+function saveSpecificationXml(fileName) {
   const blob = new Blob([specificationXml()], { type: 'application/xml;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
-  const date = new Date().toISOString().slice(0, 10);
   link.href = url;
-  link.download = `nestwell-curtain-specification-${date}.xml`;
+  link.download = `${fileName}.xml`;
   document.body.append(link);
   link.click();
   link.remove();
   URL.revokeObjectURL(url);
-  $('#copyStatus').textContent = 'XML specification downloaded.';
+  $('#copyStatus').textContent = `Saved as ${fileName}.xml`;
+}
+
+function openSaveDialog() {
+  const dialog = $('#saveDialog');
+  const input = $('#saveFileName');
+  $('#saveDialogError').textContent = '';
+  input.value = defaultFileName();
+
+  if (typeof dialog.showModal !== 'function') {
+    saveSpecificationXml(defaultFileName());
+    return;
+  }
+
+  dialog.showModal();
+  input.focus();
+  input.select();
+}
+
+function confirmSaveDialog(event) {
+  event.preventDefault();
+  const name = sanitizeFileName($('#saveFileName').value);
+  if (!name) {
+    $('#saveDialogError').textContent = 'Enter a file name to save this specification.';
+    $('#saveFileName').focus();
+    return;
+  }
+  $('#saveDialog').close();
+  saveSpecificationXml(name);
 }
 
 async function copySpecification() {
@@ -545,7 +586,9 @@ document.addEventListener('DOMContentLoaded', () => {
   $$('.progress-step').forEach((button) => button.addEventListener('click', () => goToStep(Number(button.dataset.goStep))));
   $('#editButton').addEventListener('click', () => goToStep(1));
   $('#copyButton').addEventListener('click', copySpecification);
-  $('#downloadXmlButton').addEventListener('click', downloadSpecificationXml);
+  $('#saveXmlButton').addEventListener('click', openSaveDialog);
+  $('#saveDialogForm').addEventListener('submit', confirmSaveDialog);
+  $('#saveDialogCancel').addEventListener('click', () => $('#saveDialog').close());
   $('#printButton').addEventListener('click', () => window.print());
   $('#resetButton').addEventListener('click', resetTool);
   $('#summaryTrigger').addEventListener('click', () => setSummaryOpen(true));
