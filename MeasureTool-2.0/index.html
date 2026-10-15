@@ -17,11 +17,11 @@
 
     <nav class="progress" aria-label="Measurement progress">
       <ol>
-        <li><button type="button" class="progress-step is-active" data-go-step="1" aria-current="step"><span>01</span>Rod width</button></li>
-        <li><button type="button" class="progress-step" data-go-step="2"><span>02</span>Heading</button></li>
-        <li><button type="button" class="progress-step" data-go-step="3"><span>03</span>Fullness</button></li>
-        <li><button type="button" class="progress-step" data-go-step="4"><span>04</span>Panels</button></li>
-        <li><button type="button" class="progress-step" data-go-step="5"><span>05</span>Length</button></li>
+        <li><button type="button" class="progress-step is-active" data-go-step="1" aria-current="step"><span>01</span>Heading</button></li>
+        <li><button type="button" class="progress-step" data-go-step="2"><span>02</span>Rod width</button></li>
+        <li><button type="button" class="progress-step" data-go-step="3"><span>03</span>Measure Height</button></li>
+        <li><button type="button" class="progress-step" data-go-step="4"><span>04</span>Fullness</button></li>
+        <li><button type="button" class="progress-step" data-go-step="5"><span>05</span>Panels</button></li>
       </ol>
     </nav>
 
@@ -39,7 +39,20 @@
           <section class="step-panel is-active" data-step="1" aria-labelledby="step-1-title">
             <header class="step-heading">
               <p class="step-kicker">Step 1 of 5</p>
-              <h2 id="step-1-title">Measure the rod or track</h2>
+              <h2 id="step-1-title">Choose your heading style</h2>
+              <p>The heading determines how the curtain hangs and which fullness choices are suitable.</p>
+            </header>
+            <fieldset class="choice-group">
+              <legend class="sr-only">Heading style</legend>
+              <div class="heading-grid" id="headingOptions"></div>
+            </fieldset>
+            <p class="field-error" id="step1Error" role="alert"></p>
+          </section>
+
+          <section class="step-panel" data-step="2" aria-labelledby="step-2-title" hidden>
+            <header class="step-heading">
+              <p class="step-kicker">Step 2 of 5</p>
+              <h2 id="step-2-title">Measure the rod or track</h2>
               <p>Measure the usable width, excluding decorative finials. If your hardware is not installed, estimate it from the window width.</p>
             </header>
 
@@ -85,26 +98,63 @@
             </div>
 
             <div class="result-strip"><span>Rod or track width</span><strong id="curtainWidthResult">Not measured</strong></div>
-            <p class="field-error" id="step1Error" role="alert"></p>
-          </section>
-
-          <section class="step-panel" data-step="2" aria-labelledby="step-2-title" hidden>
-            <header class="step-heading">
-              <p class="step-kicker">Step 2 of 5</p>
-              <h2 id="step-2-title">Choose your heading style</h2>
-              <p>The heading determines how the curtain hangs and which fullness choices are suitable.</p>
-            </header>
-            <fieldset class="choice-group">
-              <legend class="sr-only">Heading style</legend>
-              <div class="heading-grid" id="headingOptions"></div>
-            </fieldset>
             <p class="field-error" id="step2Error" role="alert"></p>
           </section>
 
           <section class="step-panel" data-step="3" aria-labelledby="step-3-title" hidden>
             <header class="step-heading">
               <p class="step-kicker">Step 3 of 5</p>
-              <h2 id="step-3-title">Choose the fullness</h2>
+              <h2 id="step-3-title">Measure height &amp; choose your finish</h2>
+              <p>Start with the height of your rod. Then decide how your curtains will meet the floor.</p>
+            </header>
+
+            <section class="height-section" aria-labelledby="height-section-title">
+              <div class="section-label"><span>01</span><h3 id="height-section-title">From rod to floor</h3></div>
+              <div class="height-guide">
+                <figure class="height-illustration">
+                  <div id="heightIllustration"></div>
+                  <figcaption>One straight measurement, from rod top to floor.</figcaption>
+                </figure>
+                <div class="height-copy">
+                  <p class="eyebrow">Your starting point</p>
+                  <h4>How high is your rod?</h4>
+                  <p id="heightHelp">Measure straight down from the <strong>top of the rod</strong> to the floor, not to the window sill.</p>
+                  <label class="field" for="rodToFloorHeight">
+                    <span>Rod top to floor</span>
+                    <span class="measurement-input"><input id="rodToFloorHeight" type="number" min="0" step="any" inputmode="decimal" placeholder="Enter height" aria-describedby="heightHelp heightError"><small data-unit-label>in</small></span>
+                  </label>
+                  <p class="field-error" id="heightError" role="alert"></p>
+                  <p class="measurement-tip">Measure at two or three points and use the shortest distance if your floor is uneven.</p>
+                </div>
+              </div>
+            </section>
+
+            <section class="finish-section" aria-labelledby="finish-section-title">
+              <div class="section-label"><span>02</span><h3 id="finish-section-title">Choose your finish style</h3></div>
+              <p class="section-intro">A little clearance, a tailored touch, or a soft pool of linen. Find the finish that feels like home.</p>
+              <fieldset class="choice-group" aria-describedby="finishStyleError">
+                <legend class="sr-only">Finish style</legend>
+                <div class="finish-grid" id="finishOptions"></div>
+              </fieldset>
+              <p class="illustration-note">Illustrations show the hem effect; proportions are illustrative.</p>
+              <p class="field-error" id="finishStyleError" role="alert"></p>
+            </section>
+
+            <div class="length-adjustment" id="grommetLengthAdjustment" hidden>
+              <strong>Grommet Top adjustment</strong>
+              <p id="grommetLengthCopy"></p>
+            </div>
+            <div class="result-strip">
+              <span>Final curtain length</span>
+              <strong id="finishedLengthResult">—</strong>
+            </div>
+            <p class="length-breakdown" id="lengthBreakdown"></p>
+          </section>
+
+          <section class="step-panel" data-step="4" aria-labelledby="step-4-title" hidden>
+            <header class="step-heading">
+              <p class="step-kicker">Step 4 of 5</p>
+              <h2 id="step-4-title">Choose the fullness</h2>
               <p>Fullness is the ratio of fabric width to rod width. More fullness creates deeper, richer folds.</p>
             </header>
             <div class="context-note" id="fullnessGuidance"></div>
@@ -115,13 +165,13 @@
             <div class="formula" aria-label="Fabric width formula">
               <span id="formulaRodWidth">—</span><i aria-hidden="true">×</i><span id="formulaFullness">—</span><i aria-hidden="true">=</i><strong id="fabricWidthResult">—</strong>
             </div>
-            <p class="field-error" id="step3Error" role="alert"></p>
+            <p class="field-error" id="step4Error" role="alert"></p>
           </section>
 
-          <section class="step-panel" data-step="4" aria-labelledby="step-4-title" hidden>
+          <section class="step-panel" data-step="5" aria-labelledby="step-5-title" hidden>
             <header class="step-heading">
-              <p class="step-kicker">Step 4 of 5</p>
-              <h2 id="step-4-title">Choose the number of panels</h2>
+              <p class="step-kicker">Step 5 of 5</p>
+              <h2 id="step-5-title">Choose the number of panels</h2>
               <p>A pair opens from the center; one panel is suited to a single-side draw.</p>
             </header>
             <fieldset class="choice-group">
@@ -143,39 +193,6 @@
               <div><span>Total fabric width</span><strong id="panelTotalResult">—</strong></div>
               <div><span>Width per panel</span><strong id="panelWidthResult">—</strong></div>
             </div>
-          </section>
-
-          <section class="step-panel" data-step="5" aria-labelledby="step-5-title" hidden>
-            <header class="step-heading">
-              <p class="step-kicker">Step 5 of 5</p>
-              <h2 id="step-5-title">Measure the finished length</h2>
-              <p>Your starting point depends on the selected heading style. Keep the tape straight and measure to your desired hem.</p>
-            </header>
-            <div class="length-guide">
-              <div class="length-illustration" id="lengthIllustration"></div>
-              <div class="length-copy">
-                <p class="eyebrow" id="lengthHeadingName"></p>
-                <h3 id="lengthGuideTitle"></h3>
-                <p id="lengthGuideCopy"></p>
-                <ul>
-                  <li>Measure at two or three points to check for an uneven floor.</li>
-                  <li>Use the shortest measurement for a clean, floor-skimming finish.</li>
-                </ul>
-              </div>
-            </div>
-            <label class="field" for="curtainLength">
-              <span>Measured curtain length</span>
-              <span class="measurement-input"><input id="curtainLength" type="number" min="0" step="0.1" inputmode="decimal" placeholder="Enter length"><small data-unit-label>in</small></span>
-            </label>
-            <div class="length-adjustment" id="grommetLengthAdjustment" hidden>
-              <strong>Grommet Top adjustment</strong>
-              <p id="grommetLengthCopy"></p>
-            </div>
-            <div class="result-strip">
-              <span>Final curtain length</span>
-              <strong id="finishedLengthResult">—</strong>
-            </div>
-            <p class="field-error" id="step5Error" role="alert"></p>
           </section>
 
           <section class="step-panel review-panel" data-step="6" aria-labelledby="review-title" hidden>
